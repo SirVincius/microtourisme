@@ -47,7 +47,7 @@ def get_three_days_weather(latitude=0, longitude=0):
 #fonction pour obtenir la meteo pour chaque heure du jour selectionné par get_three_days_weather
 def get_hourly_weather(longitude, latitude, day_offset=0):
 
-    url = f"http://api.weatherapi.com/v1/forecast.json?key=a74bea3533e14e8da79143237240807&q={latitude},{longitude}&days=3"
+    url = f"http://api.weatherapi.com/v1/forecast.json?key=INSERTKEY&q={latitude},{longitude}&days=3"
     response = requests.get(url)
     data = response.json()
     current_time = datetime.now() + timedelta(days=day_offset)
@@ -74,7 +74,7 @@ def get_hourly_weather(longitude, latitude, day_offset=0):
                 return hourly_weather
 
     if len(hourly_weather) < 24 and day_offset == 0:
-        next_day_url = f'http://api.weatherapi.com/v1/forecast.json?key=a74bea3533e14e8da79143237240807&q={latitude},{longitude}&days=2'
+        next_day_url = f'http://api.weatherapi.com/v1/forecast.json?key=INSERTKEY&q={latitude},{longitude}&days=2'
         next_day_response = requests.get(next_day_url)
         next_day_data = next_day_response.json()
         for day in next_day_data['forecast']['forecastday'][1:]:
@@ -134,7 +134,7 @@ def curll(o_lat, o_lng, d_lat, d_lng, deplacement):
 
     headers = {
         'Content-Type': 'application/json',
-        'X-Goog-Api-Key': 'AIzaSyCS0DxssaR4GBA6Qjd9H_WQsoasUntGcNc',
+        'X-Goog-Api-Key': 'INSERT KEY',
         'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline,routes.legs.polyline,routes.legs.travelAdvisory,routes.legs.steps.navigationInstruction',
     }
 
@@ -181,7 +181,7 @@ def curll2(o_lat, o_lng, d_lat, d_lng, deplacement):
 
     headers = {
         'Content-Type': 'application/json',
-        'X-Goog-Api-Key': 'AIzaSyCS0DxssaR4GBA6Qjd9H_WQsoasUntGcNc',
+        'X-Goog-Api-Key': 'INSERT KEY',
         'X-Goog-FieldMask': 'routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline,routes.legs.polyline,routes.legs.travelAdvisory,routes.legs.steps.navigationInstruction',
     }
 
