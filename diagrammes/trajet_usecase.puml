@@ -1,0 +1,36 @@
+@startuml
+
+title <size:24><color:#darkblue><u><:1f98b:> Diagramme de Cas d'utilisation trajets <:1f98b:></u></color></size>
+
+left to right direction
+
+together {
+
+    actor Utilisateur as UU #blue
+    actor Admininistrateur as UA #green
+}
+
+package Trajets #LightBlue {
+
+    together {
+    
+        usecase "générer un trajet" as GT #red
+        usecase "visualiser trajet" as VT #red
+        usecase "visualiser détails" as VD #red
+    }
+
+    usecase "donner feeback" as DF #red
+    usecase "visualiser feedback" as VF #red
+}
+
+UU -- GT
+UU -- VT
+UU -- VD
+UU -- DF
+UU -- VF
+
+UA --- VF
+
+UA -|> UU
+
+@enduml

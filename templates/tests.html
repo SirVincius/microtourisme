@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% include 'head.html' %}
+  <body>
+    <div class="container-fluid">
+      {% include 'navbar.html' %}
+      <div class="container">
+        <form method="POST" action="/delete_user">
+          <label for="email">Email</label>
+          <input class="form-control" type="email" name="email" id="email" />
+          <button class="btn btn-primary" type="submit">
+            Supprimer l'utilisateur
+          </button>
+        </form>
+        <br />
+        <form action="{{ url_for('google_places_search')}}">
+          <button type="submit">Test Google API</button>
+        </form>
+        <br />
+      </div>
+    </div>
+    <div id="map"></div>
+    {% include 'script.html' %}
+    <script>
+      var map = L.map("map").setView([51.505, -0.09], 13);
+    </script>
+  </body>
+</html>
+<!--AIzaSyDBSK1hdsiYUID3HFgcE2RzIVXaj8QvQs0-->>

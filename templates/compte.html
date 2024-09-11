@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% include 'head.html' %}
+  <body>
+    <div class="container-fluid">
+      {% include 'navbar.html' %}
+      <div class="container">
+        {% if admin == 1 %}
+        <div class="container-white">
+          <div>
+            <h3>Commentaires des utilisateurs</h3>
+            <div>
+              <br />
+              <a
+                class="btn btn-primary"
+                data-toggle="collapse"
+                href="#commentaires"
+                role="button"
+                aria-expanded="false"
+                aria-controls="commentaires"
+              >
+                Voir les commentaires des utilisateurs
+              </a>
+            </div>
+            <br />
+            <ul class="collapse margin-bottom-medium" id="commentaires"></ul>
+          </div>
+        </div>
+        {% endif %} {% if admin == 1 %}
+        <div class="container-white">
+          <div>
+            <h3>Comptes utilisateur</h3>
+            <div>
+              <br />
+              <a
+                class="btn btn-primary"
+                data-toggle="collapse"
+                href="#comptes"
+                role="button"
+                aria-expanded="false"
+                aria-controls="comptes"
+              >
+                Voir les comptes utilisateur
+              </a>
+            </div>
+            <br />
+            <ul class="collapse margin-bottom-medium" id="comptes"></ul>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="container-white">
+          <div>
+            <h3>Trajets</h3>
+            <div>
+              <br />
+              <a
+                class="btn btn-primary"
+                data-toggle="collapse"
+                href="#trajets"
+                role="button"
+                aria-expanded="false"
+                aria-controls="trajets"
+              >
+                Voir les trajets
+              </a>
+            </div>
+            <br />
+            <ul class="collapse margin-bottom-medium" id="trajets"></ul>
+          </div>
+        </div>
+
+        {% if admin == 1 %}
+        <div class="container-white">
+          <div>
+            <h3>Supprimer un compte utilisateur</h3>
+            <div class="form-group">
+              <label for="exampleInputEmail1">Email address</label>
+              <input
+                type="email"
+                class="form-control"
+                style="max-width: 500px"
+                id="suppression-admin"
+                placeholder="Adresse courriel à supprimer"
+              />
+            </div>
+            <button
+              class="btn btn-danger"
+              type="button"
+              onclick="supprimer_admin()"
+            >
+              Supprimer le compte
+            </button>
+          </div>
+          <small id="avertissement" class="form-text" style="color: red"
+            >* Cette action est irreversible</small
+          >
+        </div>
+        {% endif %} {% if admin == 0 %}
+        <div class="container-white">
+          <h3>Espace utilisateur</h3>
+          <div id="supprimer">
+            <button class="btn btn-danger" type="submit" onclick="confirmer()">
+              Supprimer le compte
+            </button>
+          </div>
+          <div id="confirmation" class="invisible">
+            <h3 class="margin-top-medium margin-bot-small text-danger">
+              ATTENTION!
+            </h3>
+            <p style="width: 300px; font-weight: bold">
+              Une fois le compte supprimer, toutes les données enregistrées au
+              compte seront supprimées. Si vous êtes certain veuillez écrire
+              'SUPPRIMER' dans la case ci-dessous pour confirmer la suppression.
+            </p>
+            <input
+              id="confirmation-suppression"
+              class="form-control"
+              style="width: 200px"
+              type="text"
+              placeholder="SUPPRIMER"
+            />
+            <button class="btn btn-danger" type="button" onclick="supprimer()">
+              Supprimer le compte
+            </button>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+    {% include 'script.html' %}
+    <script>
+      window.onload = function () {
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", "/obtenir_liste_commentaires", true);
+
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState == 4 && xhr.status == 200) {
+            try {
+              var data = JSON.parse(xhr.responseText);
+              construire_table_commentaires(data);
+            } catch (error) {
+              console.error("Erreur de traitement du JSON : ", error);
+            }
+          } else if (xhr.readyState == 4) {
+            console.error("Échec de la requête : ", xhr.status);
+          }
+        };
+
+        xhr.send();
+
+        var xhr2 = new XMLHttpRequest();
+        xhr2.open("GET", "/obtenir_liste_comptes", true);
+        xhr2.onreadystatechange = function () {
+          if (xhr2.readyState == 4 && xhr2.status == 200) {
+            try {
+              var data2 = JSON.parse(xhr2.responseText);
+              construire_table_comptes(data2);
+            } catch (error) {
+              console.error("Erreur de traitement du JSON : ", error);
+            }
+          } else if (xhr2.readyState == 4) {
+            console.error("Échec de la requête : ", xhr2.status);
+          }
+        };
+
+        xhr2.send();
+
+        var xhr3 = new XMLHttpRequest();
+        xhr3.open("GET", "/obtenir_trajets", true);
+        xhr3.onreadystatechange = function () {
+          if (xhr3.readyState == 4 && xhr3.status == 200) {
+            try {
+              var data3 = JSON.parse(xhr3.responseText);
+              construire_table_trajets(data3);
+            } catch (error) {
+              console.error("Erreur de traitement du JSON : ", error);
+            }
+          } else if (xhr3.readyState == 4) {
+            console.error("Échec de la requête : ", xhr3.status);
+          }
+        };
+
+        xhr3.send();
+      };
+
+      /*
+       * Construction de la tables des commentaires des utilisateurs
+       */
+      function construire_table_commentaires(commentaires) {
+        var table_commentaires = document.getElementById("commentaires");
+        table_commentaires.innerHTML = "";
+
+        commentaires.forEach((element) => {
+          var item = document.createElement("li");
+          var satisfait = "Non";
+          if (element.est_satisfait == "1") satisfait = "Oui";
+          item.innerHTML = `<p><span style="font-weight: bold">User ID</span> : ${element.user_id}</p><p><span style="font-weight: bold">Commentaire ID</span> : ${element.id}</p><p><span style="font-weight: bold">Date</span> : ${element.date}</p><p><span style="font-weight: bold">Satisfait</span> : ${satisfait}</p><p><span style="font-weight: bold">Commentaire</span> : ${element.commentaire}</p><br>`;
+          table_commentaires.appendChild(item);
+        });
+      }
+
+      function construire_table_trajets(trajets) {
+        var table_trajets = document.getElementById("trajets");
+        table_trajets.innerHTML = "";
+        trajets.forEach((element) => {
+          console.log(element);
+          var item = document.createElement("li");
+          item.innerHTML = `<p><span style="font-weight: bold">Date</span> : ${
+            element.date.split(" ")[0]
+          }</p><p><span style="font-weight: bold">rayon</span> : ${
+            element.rayon
+          }m</p>`;
+          var trajet_data = element.dataTrajets;
+          var trajet_data_split_places = trajet_data.split(";");
+          item.innerHTML += "<ul>";
+          for (
+            let index = 0;
+            index < trajet_data_split_places.length - 2;
+            index++
+          ) {
+            var places = trajet_data_split_places[index].split("::");
+            item.innerHTML += `<li><p><span style="font-weight: bold">Endroit</span> : ${places[2]}</p><p><span style="font-weight: bold">Type d'attraction</span> : ${places[3]}</p></li>`;
+          }
+          item.innerHTML += `</ul><button class="btn btn-primary" type="button" value=${element.id} onclick="regenerer(this)">Générer à nouveau</button><br><br>`;
+          table_trajets.appendChild(item);
+        });
+      }
+
+      /*
+       * Construction de la tables des comptes utilisateurs
+       */
+      function construire_table_comptes(comptes) {
+        var table_comptes = document.getElementById("comptes");
+        table_comptes.innerHTML = "";
+
+        comptes.forEach((element) => {
+          var item = document.createElement("li");
+          item.innerHTML = `<p><span style="font-weight: bold">User ID</span> : ${element.id}</p><p><span style="font-weight: bold">Nom</span> : ${element.name}</p><p><span style="font-weight: bold">Prénom</span> : ${element.firstname}</p><p><span style="font-weight: bold">Adresse courriel</span> : ${element.email}</p><br>`;
+          table_comptes.appendChild(item);
+        });
+      }
+
+      function confirmer() {
+        $("#confirmation").toggleClass("invisible");
+        $("#supprimer").toggleClass("invisible");
+      }
+      function supprimer() {
+        var confirmation = document.getElementById(
+          "confirmation-suppression"
+        ).value;
+        if (confirmation == "SUPPRIMER") {
+          window.location.href = "/delete_user";
+        }
+      }
+
+      function supprimer_admin() {
+        courriel = document.getElementById("suppression-admin").value;
+
+        var xhr3 = new XMLHttpRequest();
+        xhr3.open("POST", "/delete_user", true);
+        xhr3.setRequestHeader("Content-Type", "application/json");
+
+        var data = {
+          courriel: courriel,
+        };
+        xhr3.send(JSON.stringify(data));
+      }
+
+      const regenererUrlBase = "{{ url_for('regenerer', id='') }}";
+
+      function regenerer(button) {
+        const id = button.value;
+        const url = regenererUrlBase + id;
+        window.location.href = url;
+      }
+    </script>
+  </body>
+</html>

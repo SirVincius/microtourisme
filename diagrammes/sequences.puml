@@ -1,0 +1,18 @@
+@startuml
+
+title <size:24><color:#darkblue><u><:1f98b:> Diagramme de séquence <:1f98b:></u></color></size>
+
+actor Usager as A #blue
+
+loop 
+    A -> FormCatégories: Demande trajet
+    FormCatégories -> Système: Traitement demande
+    Système -> API: get Data()
+    API -> Système: Data
+    Système -> Système: Traiter data
+    Système -> Système: Appliquer algoritme
+    Système -> FormAffichage: Afficher résultats
+    FormAffichage -> A: retour à l'utilisateur
+end
+
+@enduml

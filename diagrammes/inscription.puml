@@ -1,0 +1,47 @@
+@startuml
+
+participant Utilisateur
+
+Utilisateur -> AccountForm : Completion formulaire
+activate AccountForm
+
+
+
+AccountForm -> ValidationBackEnd : Validation
+activate ValidationBackEnd
+
+database BaseDeDonnees as BaseDeDonnees
+
+ValidationBackEnd -> Utilisateur : Erreur de validation
+ValidationBackEnd -> BaseDeDonnees : Inscription
+
+@enduml
+
+@startuml
+
+participant Utilisateur
+
+
+Utilisateur -> AccountForm : Completion formulaire
+activate AccountForm
+
+
+AccountForm -> ValidationBackEnd : Validation
+activate ValidationBackEnd
+
+database BaseDeDonnees as BaseDeDonnees
+
+ValidationBackEnd -> Utilisateur : Erreur de validation
+ValidationBackEnd -> BaseDeDonnees : Inscription
+
+alt Succès
+    BaseDeDonnees -> ValidationBackEnd : Écriture réussie
+    ValidationBackEnd -> Utilisateur : Page de confirmation   
+
+else Erreur
+    BaseDeDonnees -> ValidationBackEnd : Err. Écriture
+    ValidationBackEnd -> Utilisateur : Page d'erreur
+
+end
+
+@enduml

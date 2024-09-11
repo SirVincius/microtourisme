@@ -1,0 +1,83 @@
+@startuml bd
+
+title Diagramme de base de données
+
+'configuration
+left to right direction
+hide circle
+
+    entity "countries" as countries {
+      id INTEGER PRIMARY KEY AUTOINCREMENT
+      --
+      name VARCHAR(100) NOT NULL
+      ..
+      ...
+    }
+    
+    entity "cities" as cities {
+      id INTEGER PRIMARY KEY AUTOINCREMENT
+      --
+      name VARCHAR(255) NOT NULL
+      ..
+      ...
+      ..
+      latitude DECIMAL NOT NULL
+      longitude DECIMAL NOT NULL
+      ..
+      ...
+    }
+
+    entity "user" as user {
+    id INTEGER PRIMARY KEY AUTOINCREMENT
+    --
+    first_name TEXT
+    name TEXT
+    birthdate DATE
+    email TEXT
+    salt TEXT
+    hash TEXT
+    confirmed BOOLEAN DEFAULT FALSE
+    admin BOOLEAN DEFAULT FALSE
+    }
+
+    entity "session" as session {
+    session_id INTEGER PRIMARY KEY
+    user_id INTEGER
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    }
+
+    
+    entity "commentaires" as commentaires {
+      commentaire_id INTEGER PRIMARY KEY AUTOINCREMENT
+      date DATE
+      est_satisfait INTEGER
+      commentaire TEXT
+      user_id INTEGER
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    }
+    
+    entity "trajets" as trajets {
+      id INTEGER PRIMARY KEY AUTOINCREMENT
+      date DATE
+      lat TEXT
+      lng TEXT
+      dataTrajets TEXT
+      rayon TEXT
+      poly TEXT
+      liste TEXT
+      weather TEXT
+      user_id INTEGER
+      FOREIGN KEY (user_id) REFERENCES users(id)
+    }
+    
+    
+
+     
+
+countries "1" -- "0-*" cities
+user "1" -- "0-1" session
+user "1" -- "0-*" commentaires
+user "1" -- "0-*" trajets
+
+
+@enduml

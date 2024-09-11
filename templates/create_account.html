@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% include 'head.html' %}
+  <body>
+    <div class="container-fluid">
+      {% include 'navbar.html' %}
+      <div class="container">
+        <h1 class="margin-top-medium margin-bottom-small">
+          Créer votre compte
+        </h1>
+        <hr class="very-light-grey" />
+        <form method="POST" action="{{ url_for('create_account')}}" novalidate>
+          <div class="row">
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                {{ form.csrf_token }} {{ form.firstName.label }} {{
+                form.firstName(class_='form-control') }}
+                <ul>
+                  {% for error in form.firstName.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                {{ form.name.label }} {{ form.name(class_='form-control') }}
+                <ul>
+                  {% for error in form.name.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                {{ form.birthdate.label }} {{
+                form.birthdate(class_='form-control datepicker', type='date' )
+                }}
+                <ul>
+                  {% for error in form.birthdate.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                {{ form.email.label }} {{ form.email(class_='form-control') }}
+                <ul>
+                  {% for error in form.email.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                {{ form.password.label }} {{
+                form.password(class_='form-control') }}
+                <ul>
+                  {% for error in form.password.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                {{ form.passwordConfirmation.label }} {{
+                form.passwordConfirmation(class_='form-control') }}
+                <ul>
+                  {% for error in form.passwordConfirmation.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">Créer le compte</button>
+        </form>
+      </div>
+    </div>
+    {% include 'script.html' %}
+  </body>
+</html>

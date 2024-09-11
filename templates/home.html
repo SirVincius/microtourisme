@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% include 'head.html' %}
+  <body>
+    <div class="d-flex flex-column min-vh-100">
+      {% include 'navbar.html' %}
+      
+      <!-- Section bienvenue -->
+      <div class="welcome-section flex-grow-1 d-flex flex-column justify-content-center align-items-center">
+        <h1 class="welcome-title">Bienvenue sur MicroTourisme</h1>
+        <p class="welcome-subtitle">Explorez, découvrez et profitez de votre voyage.</p>
+        <a href="{{ url_for('generation') }}" class="generate-button">Générer un itinéraire</a>      </div>
+
+      <!-- Instructions Section -->
+      <div class="container instructions-section flex-grow-1">
+        <div class="row">
+          <div class="col-md-4 instruction">
+            <div class="instruction-icon">&#128205;</div> 
+            <h3 class="instruction-title"><a href="{{ url_for('generation') }}" class="no-style-link">Créez votre itinéraire</a></h3>
+            <p class="instruction-description">Sélectionnez vos intérêts et laissez notre application créer un itinéraire personnalisé pour vous.</p>
+          </div>
+          <div class="col-md-4 instruction">
+            <div class="instruction-icon">&#128506;</div> 
+            <h3 class="instruction-title">Découvrez des recommandations</h3>
+            <p class="instruction-description">Explorez les meilleures attractions locales grâce à nos recommandations.</p>
+          </div>
+          <div class="col-md-4 instruction">
+            <div class="instruction-icon">&#127777;</div> 
+            <h3 class="instruction-title"><a href="{{ url_for('meteo') }}" class="no-style-link">Consultez la météo</a></h3>
+            <p class="instruction-description">Vérifiez les prévisions météorologiques en temps réel pour planifier vos activités en plein air.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section AVIS -->
+      <div class="container testimonials-section flex-grow-1">
+        <h2 class="text-center mb-5">Témoignages</h2>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="testimonial">
+              <p>"MicroTourisme a rendu mon voyage inoubliable! Les recommandations étaient parfaites."</p>
+              <p class="testimonial-author">- Marie</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="testimonial">
+              <p>"Une application indispensable pour tout voyageur. Simple et efficace."</p>
+              <p class="testimonial-author">- Jean</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="testimonial">
+              <p>"Grâce à MicroTourisme, j'ai découvert des endroits incroyables que je n'aurais jamais trouvés seul."</p>
+              <p class="testimonial-author">- Sophie</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Statistics  -->
+      <div class="container statistics-section flex-grow-1">
+        <h2 class="text-center mb-5">Nos Statistiques</h2>
+        <div class="row">
+          <div class="col-md-4 text-center">
+            <h3>100+</h3>
+            <p>Destinations couvertes</p>
+          </div>
+          <div class="col-md-4 text-center">
+            <h3>100+</h3>
+            <p>Attractions listées</p>
+          </div>
+          <div class="col-md-4 text-center">
+            <h3>1,000+</h3>
+            <p>Itinéraires créés</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <footer class="footer mt-auto py-3">
+        <div class="container">
+          <div class="row">
+            <div class="col-md-6">
+              <p>&copy; 2024 MicroTourisme. Tous droits réservés.</p>
+            </div>
+            <div class="col-md-6">
+              <ul class="footer-links">
+                <li><a href="#">À propos</a></li>
+                <li><a href="#">Contact</a></li>
+                <li><a href="#">Mentions légales</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+    {% include 'script.html' %}
+  </body>
+</html>

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% include 'head.html' %}
+  <body>
+    <div class="container-fluid">
+      {% include 'navbar.html' %}
+      <div class="container">
+        <h1 class="margin-top-medium margin-bottom-small">
+          Connectez-vous
+        </h1>
+        <hr class="very-light-grey" />
+        <form method="POST" action="{{ url_for('login')}}" novalidate>
+            <div class="row">
+                <div class="form-group">
+                    {{ form.csrf_token }} {{ form.email.label }} {{
+                    form.email(class_='form-control') }}
+                    <ul>
+                      {% for error in form.email.errors %}
+                      <li style="color: red">{{ error }}</li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </div>
+                <div class="row">
+                <div class="form-group">
+                    {{ form.password.label }} {{
+                    form.password(class_='form-control') }}
+                    <ul>
+                      {% for error in form.password.errors %}
+                      <li style="color: red">{{ error }}</li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Se connecter</button>
+                <div class="margin-top-small">
+                  <p>Pas de compte?<a href="{{ url_for('create_account')}}"> Créer un compte!</a></p>
+                  <p>Mot de passe oublié?<a href="{{ url_for('reset_request') }}">Réinitialiser le mot de passe!</a></p>
+                  
+                </div>
+            </form>
+          </div>
+      </div>
+    </div>
+    {% include 'script.html' %}
+  </body>
+</html>

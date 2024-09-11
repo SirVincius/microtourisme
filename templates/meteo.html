@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr">
+  {% include 'head.html' %}
+  <body class="meteo-page">
+    <div class="container-fluid">
+      {% include 'navbar.html' %}
+      <div class="container">
+        <div class="container-local home-title-container">
+          <h1 class="home-title">Prévisions Météo Horaires</h1>
+          <ul class="nav nav-tabs" id="weatherTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <a class="nav-link active" id="today-tab" data-toggle="tab" href="#today" role="tab" aria-controls="today" aria-selected="true">Aujourd'hui</a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" id="tomorrow-tab" data-toggle="tab" href="#tomorrow" role="tab" aria-controls="tomorrow" aria-selected="false">Demain</a>
+            </li>
+            <li class="nav-item" role="presentation">
+              <a class="nav-link" id="day_after_tomorrow-tab" data-toggle="tab" href="#day_after_tomorrow" role="tab" aria-controls="day_after_tomorrow" aria-selected="false">{{ weather['day_after_tomorrow'][0]['weekday'] }}</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="weatherTabContent">
+            <div class="tab-pane fade show active" id="today" role="tabpanel" aria-labelledby="today-tab">
+              <div class="weather-container">
+                {% for hour in weather.today %}
+                  <div class="weather-hour">
+                    <p>{{ 'Maintenant' if hour.is_now else hour.time }}</p>
+                    <img src="{{ hour.icon }}" alt="Icône météo">
+                    <p>{{ hour.temperature }}°C</p>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="tab-pane fade" id="tomorrow" role="tabpanel" aria-labelledby="tomorrow-tab">
+              <div class="weather-container">
+                {% for hour in weather.tomorrow %}
+                  <div class="weather-hour">
+                    <p>{{ hour.time }}</p>
+                    <img src="{{ hour.icon }}" alt="Icône météo">
+                    <p>{{ hour.temperature }}°C</p>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="tab-pane fade" id="day_after_tomorrow" role="tabpanel" aria-labelledby="day_after_tomorrow-tab">
+              <div class="weather-container">
+                {% for hour in weather.day_after_tomorrow %}
+                  <div class="weather-hour">
+                    <p>{{ hour.time }}</p>
+                    <img src="{{ hour.icon }}" alt="Icône météo">
+                    <p>{{ hour.temperature }}°C</p>
+                  </div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% include 'script.html' %}
+  </body>
+</html>

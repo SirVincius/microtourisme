@@ -1,0 +1,49 @@
+@startuml
+
+title <size:24><color:#darkblue><u><:1f98b:> Diagramme de Cas d'utilisation <:1f98b:></u></color></size>
+
+together {
+
+    actor Utilisateur as UU #blue
+    actor admininistrateur as UA #green
+}
+
+package "microtourisme.com" #LightBlue {
+
+    left to right direction    
+
+    usecase "gerer les comptes" as GC #red
+
+    together {
+
+        usecase "créer un compte utilisateur" as CC #Red
+        usecase "supprimer compte" as SSC #red
+    }
+
+    together {
+
+        usecase "se connecter" as SC #Red
+        usecase "se connecter admin" as SAD #red
+    }
+
+    usecase "créer trajets" as t #red
+
+    usecase "modifier préférences" as MP #red
+    
+    
+    
+        
+}
+
+UU -- GC
+UA -- SAD
+UU -- MP
+UU -- t
+UU -- SC
+
+SSC .up.> GC : <<extend>>
+CC ..> GC : <<extend>>
+
+UA -up-|> UU
+
+@enduml

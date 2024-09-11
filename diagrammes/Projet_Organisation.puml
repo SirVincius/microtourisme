@@ -1,0 +1,51 @@
+@startuml
+
+title <size:24><color:#darkblue><u><:1f98b:> Diagramme Hierarchique Projet microtourisme.com <:1f98b:></u></color></size>
+
+class PDG #blue{
+    
+    Chef de l'entreprise
+}
+
+class Assistant #LightBlue {
+
+    Seconder le PDG
+}
+
+class "Directeur Assurance qualité" #LightGreen {
+
+    Obtenir des données de qualitées pour la revente
+}
+
+class "QA technicien #1" #LightYellow {
+
+    Vérifier la qualité des données
+}
+
+class "QA technicien #2" #LightYellow {
+
+    Vérifier la qualité des données
+}
+
+class "Dévelopeur" #LightPink {
+
+    Programmeur HTML-Javascript-SQL
+}
+
+class "Ressources humaines" #LightSlateGray {
+
+    Comptabilité et embauche
+}
+
+PDG -> Assistant
+PDG --> "Directeur Assurance qualité"
+"Directeur Assurance qualité" --> "QA technicien #1"
+"Directeur Assurance qualité" --> "QA technicien #2"
+PDG --> "Dévelopeur"
+PDG --> "Ressources humaines"
+
+hide members
+hide circle
+show fields
+
+@enduml

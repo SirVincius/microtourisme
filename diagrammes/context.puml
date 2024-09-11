@@ -1,0 +1,49 @@
+@startuml context
+
+title <size:24><color:#darkblue><u><:1f98b:> Diagramme de Cas d'utilisation <:1f98b:></u></color></size>
+
+left to right direction 
+
+rectangle "Système actuel" {
+
+    actor Utilisateur as UU #blue
+    
+    rectangle "Système" {
+
+    }
+
+    database MySQL
+
+    together {
+    rectangle "API: GOOGLE"   
+
+    cloud {
+        
+        rectangle "WWW" as R2
+    }
+    }
+
+    cloud {
+        rectangle "WWW" as R1
+        }
+
+    together {
+    rectangle "API: MÉTÉO"
+    cloud {
+
+        rectangle "WWW" as R3
+    }
+    }
+}
+
+UU -down-> R1
+R1 -down-> "Système"
+"Système" -down-> MySQL
+
+"Système" -up-> R2
+R2 -up-> "API: GOOGLE"
+
+"Système" -up-> R3
+R3 -up-> "API: MÉTÉO"
+
+@enduml

@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% include 'head.html' %}
+  <body>
+    <div class="container-fluid">
+      {% include 'navbar.html' %}
+      <div class="container">
+        
+        <hr class="very-light-grey" />
+        <h1 class="margin-top-medium margin-bottom-small">
+          Générer un itinéraire
+        </h1>
+        <form method="POST" action="{{ url_for('trajets')}}" novalidate>
+          <div class="row">
+            <div class="col-12 col-sm-6">
+              <div class="form-group" id="T1">
+                {{ form.csrf_token }} {{ form.attraction1.label }} {{
+                form.attraction1(class_='form-control') }}
+                <ul>
+                  {% for error in form.attraction1.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                {{ form.attraction2.label }} {{
+                form.attraction2(class_='form-control') }}
+                <ul>
+                  {% for error in form.attraction2.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                {{ form.attraction3.label }} {{
+                form.attraction3(class_='form-control') }}
+                <ul>
+                  {% for error in form.attraction3.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                {{ form.attraction4.label }} {{
+                form.attraction4(class_='form-control') }}
+                <ul>
+                  {% for error in form.attraction4.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                {{ form.attraction5.label }} {{
+                form.attraction5(class_='form-control') }}
+                <ul>
+                  {% for error in form.attraction5.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                {{ form.attraction6.label }} {{
+                form.attraction6(class_='form-control') }}
+                <ul>
+                  {% for error in form.attraction6.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                {{ form.rayon.label }} {{
+                form.rayon(class_='form-control') }}
+                <ul>
+                  {% for error in form.rayon.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                {{ form.coordonnees.label }} {{
+                form.coordonnees(class_='form-control') }}
+                <ul>
+                  {% for error in form.coordonnees.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div><div class="col-12 col-sm-6">
+              <div class="form-group">
+                {{ form.pays.label }} {{
+                form.pays(class_='form-control') }}
+                <ul>
+                  {% for error in form.pays.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                {{ form.ville.label }} {{
+                form.ville(class_='form-control') }}
+                <ul>
+                  {% for error in form.ville.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                {{ form.Optimisation.label }} {{
+                form.Optimisation(class_='form-control') }}
+                <ul>
+                  {% for error in form.Optimisation.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+            <div class="col-12 col-sm-6">
+              <div class="form-group">
+                {{ form.Deplacement.label }} {{
+                form.Deplacement(class_='form-control') }}
+                <ul>
+                  {% for error in form.Deplacement.errors %}
+                  <li style="color: red">{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">
+            Générere l'itinéraire
+          </button>
+        </form>
+      </div>
+    </div>
+    {% include 'script.html' %}
+    <script>
+      window.onload = function () { 
+
+        /*obtenir coordonnees actuelles*/
+
+
+        var coordonnees = document.getElementById("coordonnees");
+        var ville = document.getElementById("ville");
+
+        coordonnees.addEventListener('change', function() {
+          var coordonneesType = this.value;
+
+          if(coordonneesType == '3') {
+            document.getElementById('pays').disabled = false;
+            document.getElementById('ville').disabled = false;
+          } else {
+            document.getElementById('pays').disabled = true;
+            document.getElementById('ville').disabled = true;
+          }
+        })
+
+        var pays = document.getElementById("pays");
+        pays.addEventListener('change', function() {
+          var id_pays = this.value;
+          ville.innerHTML = "";
+          var inner_option = document.createElement("option");
+          inner_option.text = "Selectionnez une ville";
+          inner_option.value = 'None';
+          ville.appendChild(inner_option);
+
+          fetch('{{ url_for("get_liste_villes")}}', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ id_pays: id_pays})
+            })
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(current_ville => {
+                  var option = document.createElement("option");
+                  option.text = current_ville.name;
+                  option.value = current_ville.coordonnees;
+                  ville.appendChild(option);
+                })
+            });
+          });
+
+          ville.addEventListener('change', function () {
+            coordonnees = this.value;
+          })
+        
+        }
+    </script>
+  </body>
+</html>

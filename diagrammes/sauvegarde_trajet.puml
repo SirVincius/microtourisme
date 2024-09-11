@@ -1,0 +1,40 @@
+@startuml bd
+
+title Diagramme de séquence de sauvegarde de trajets
+
+actor utilisateur as u
+participant ":trajets.html" as p
+participant ":Flask route /path" as f
+database "Base de données" as bd
+participant dummy as d
+
+activate d
+d -> d
+activate u
+u -> p : Informations
+activate p
+p -> f : GenerationForm(FlaskForm)
+deactivate p
+activate f
+f -> f : path()
+activate f
+f -> bd : sauvegarder_trajet()
+activate bd
+
+alt succes
+  bd --> f : True
+else echec
+  bd --> f : False
+deactivate bd
+end
+
+alt succes
+  f --> u : render_template(path.html)
+else echec
+  f --> u : render_template(error.html)
+deactivate f
+deactivate f
+deactivate u
+end
+
+@enduml

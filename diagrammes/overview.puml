@@ -1,0 +1,18 @@
+@startuml
+
+class App {
+    config
+}
+
+class Users {
+    id
+    ..
+    firstname
+    ..
+    name
+    ..
+    birthdate
+    email
+}
+
+@enduml

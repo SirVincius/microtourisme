@@ -1,0 +1,56 @@
+<nav
+  class="navbar navbar-expand-lg navbar-light bg-light container-side-padding"
+>
+  <a
+    class="navbar-brand mr-auto acceuil-top-bottom-padding"
+    href="{{ url_for('home') }}"
+    >Accueil</a
+  >
+  <button
+    class="navbar-toggler margin-none"
+    type="button"
+    data-toggle="collapse"
+    data-target="#navbarSupportedContent"
+    aria-controls="navbarSupportedContent"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+   
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav me-auto">
+      {% if 'user' in session %}
+      <li class="nav-item active">
+        <a class="nav-link" href="{{ url_for('generation') }}"
+          >Générer un itinéraire</a
+        >
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" href="{{ url_for('meteo') }}">Meteo</a>
+      </li>
+      {% endif %}
+    </ul>
+
+    <ul class="navbar-nav ms-auto  ">
+      {% if 'user' in session %}
+        <li class="nav-item active">
+          <span class="nav-link">Bonjour, {{ session['user'] }}!</span>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('compte') }}">Compte</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('logout') }}">Déconnexion</a>
+        </li>
+      {% else %}
+        <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('create_account_get') }}">Créer un compte</a>
+        </li>
+        <li class="nav-item active">
+          <a class="nav-link" href="{{ url_for('login_get') }}">Connexion</a>
+        </li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>

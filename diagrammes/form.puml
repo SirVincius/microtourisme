@@ -1,0 +1,67 @@
+@startuml aaa
+
+
+
+class FlaskForm
+class AccountForm {
+  firstname: StringField
+..
+  name : StringField
+..
+  birthdate : DateTimeField
+..
+  email : EmailField
+..
+  password : PasswordField
+..
+  passwordConfirmation : PasswordField
+--
+validate_email(form, field)
+}
+class LoginForm {
+  email : EmailField
+..
+  password : PasswordField
+--
+validate_password(self, password)
+}
+class ResetRequestForm {
+email : EmailField
+..
+submit : SubmitField
+}
+class ResetPasswordForm {
+password : PasswordField
+..
+confirm_password : PasswordField
+..
+submit : SubmitField
+}
+class GenerationForm {
+  type_of_attraction : List[tuple]
+..
+attraction1 : SelectField
+..
+attraction2 : SelectField
+..
+attraction3 : SelectField
+..
+attraction4 : SelectField
+..
+attraction5 : SelectField
+..
+attraction6 : SelectField
+..
+}
+class Selection {
+  sel : List[String]
+}
+
+AccountForm --|> FlaskForm
+LoginForm --|> FlaskForm 
+ResetRequestForm --|> FlaskForm
+ResetPasswordForm --|> FlaskForm
+GenerationForm --|> FlaskForm
+Selection --|> FlaskForm
+
+@enduml

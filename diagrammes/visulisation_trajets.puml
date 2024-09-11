@@ -1,0 +1,45 @@
+@startuml bd
+
+title Diagramme de séquence de visualisation des trajets
+
+actor "utilisateur/administrateur" as u
+participant ":trajets.html" as c
+participant ":Flask route /obtenir_trajets" as f
+database "Base de données" as db
+
+activate u
+u -> c : requête HTTP
+activate c
+c -> f : xhr
+activate f
+f -> f : obtenir_trajets()
+alt Succes
+    activate f
+    f -> db : obtenir_trajets()
+    activate db
+
+    alt Succes
+        db -> f : liste_trajets, (list[dict])
+    else Echec
+        db --> f : sqlite3.Error
+    end
+else Echec
+    f --> u : error.html
+end
+
+deactivate db
+deactivate f
+
+alt Erreur xhr
+    f --> c : console.log(xhr.status)
+else Erreur JSON
+    f --> c : console.log(error)
+else Succes
+    f --> c : data (JSON)
+    deactivate f
+c -> c : construire_table_trajets(data), (code html)
+end
+u <-- c : compte.html
+deactivate c
+
+@enduml

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Reset Request{% endblock %}
+
+{% block content %}
+
+<div class="container mt-5">
+ 
+
+  <form method="POST" action="{{ url_for('reset_request') }}">
+    <div class="form-group">
+      <h1>Entrez l'adresse courriel associée a votre compte</h1>
+      {{ form.csrf_token }}
+      {{ form.email.label }}
+      {{ form.email(class_='form-control') }}
+    </div>
+    <button type="submit" class="btn btn-primary">Envoyer un courriel de récuperation</button>
+  </form>
+</div>
+{% endblock %}

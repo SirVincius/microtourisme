@@ -1,0 +1,30 @@
+@startuml bd
+
+title Diagramme de base de données
+
+'configuration
+hide circle
+
+    entity "user" as user {
+    id INTEGER PRIMARY KEY AUTOINCREMENT
+    --
+    first_name TEXT
+    name TEXT
+    birthdate DATE
+    email TEXT
+    salt TEXT
+    hash TEXT
+    }
+
+    entity "session" as session {
+    session_id INTEGER PRIMARY KEY
+    --
+    user_id INTEGER
+    FOREIGN KEY (user_id) REFERENCES users(id)
+    }
+
+     
+
+user "1" -- "0-1" session
+
+@enduml

@@ -1,0 +1,15 @@
+flask
+flask_wtf
+flask_session
+flask_mail
+Babel
+itsdangerous
+datetime
+redis
+pytest
+lxml
+uuid
+requests
+bs4
+email_validator
+geocoder

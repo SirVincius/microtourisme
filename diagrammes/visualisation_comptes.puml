@@ -1,0 +1,44 @@
+@startuml bd
+
+title Diagramme de séquence de visualisation des comptes
+actor administrateur as u
+participant ":compte.html" as c
+participant ":Flask route /obtenir_comptes" as f
+database "Base de données" as db
+
+activate u
+u -> c : requête HTTP
+activate c
+c -> f : xhr
+activate f
+f -> f : obtenir_liste_comptes()
+alt Succes
+    activate f
+    f -> db : obtenir_liste_comptes()
+    activate db
+
+    alt Succes
+        db -> f : liste_comptes, (list[dict])
+    else Echec
+        db --> f : sqlite3.Error
+    end
+else Echec
+    f --> u : error.html
+end
+
+deactivate db
+deactivate f
+
+alt Erreur xhr
+    f --> c : console.log(xhr.status)
+else Erreur JSON
+    f --> c : console.log(error)
+else Succes
+    f --> c : data (JSON)
+    deactivate f
+c -> c : construire_table_comptes(data), (code html)
+end
+u <-- c : compte.html
+deactivate c
+
+@enduml

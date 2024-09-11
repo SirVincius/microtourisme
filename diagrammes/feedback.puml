@@ -1,0 +1,46 @@
+@startuml
+
+title Diagramme d'envoi de "feedback"
+
+actor utilisateur as user
+participant ":path.html" as path
+
+
+user -> path : "feedback"
+activate user
+activate path
+
+participant ":Flask route /commentaire" as route
+path -> route : envoyer_commentaire()
+activate route
+
+database "Base de donnees" as bd
+
+route -> bd : commentaire()
+activate bd
+
+alt ajout avec succes
+
+  bd --> route : True
+
+else echec de l'ajout
+
+  bd --> route : Flase
+  deactivate bd
+  end
+  
+alt ajout avec succes
+
+  route -> path : json (code 200)
+  
+else echec de l'ajout
+
+  route --> path : json (code 500)
+  deactivate route
+  end
+  
+path --> user : confirmation visuelle
+deactivate path
+deactivate user
+
+@enduml

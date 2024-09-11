@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% include 'head.html' %}
+  <head>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCS0DxssaR4GBA6Qjd9H_WQsoasUntGcNc&libraries=places"></script>
+  </head>
+  <body>
+    <div class="container-fluid">
+      {% include 'navbar.html' %}
+      <div class="row">
+        <!-- Cartes à gauche -->
+        <div class="col-md-6 col-md-12">
+          <div  class="container-centered">
+            <div class="row max-width-700" id="row1">
+              <div class="trajet-small col-12 col-md-6" id="map1"></div>
+              <div class="trajet-small col-12 col-md-6" id="map2"></div>
+            </div>
+            <div class="row max-width-700" id="row2">
+              <div class="trajet-small col-12 col-md-6" id="map3"></div>
+              <div class="trajet-small col-12 col-md-6" id="map4"></div>
+            </div>
+            <div class="row max-width-700" id="row3">
+              <div class="trajet-small col-12 col-md-6" id="map5"></div>
+              <div class="trajet-small col-12 col-md-6" id="map6"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Formulaire à droite -->
+        <div class="col-md-6">
+          
+          <div id="form1">
+          </div>
+        </div>
+        </div>
+        <script>
+
+          // Récupération de la liste d'attractions
+        attractions = JSON.parse('{{attractions|safe}}')
+        lng = '{{ lng | safe }}'
+        lat = '{{ lat | safe }}'
+        optimisation = '{{ optimisation | safe }}'
+        var attraction_count = 0;
+
+        // Déclaration de fonctions
+        var dataF = "";
+
+
+        // Fonction de création de marqueur
+        function createMarker(place, map) {
+            var marker = new google.maps.Marker({
+                map: map,
+                position: place.geometry.location
+            });
+
+            google.maps.event.addListener(marker, 'click', function() {
+                var infowindow = new google.maps.InfoWindow();
+                infowindow.setContent(place.name);
+                infowindow.open(map, this);
+            });
+        }                      
+
+
+        // Fonction de génération de map         
+          function initMap(mapId, centerLat, centerLng, attractionType, zoomLevel) {
+            var center = new google.maps.LatLng(centerLat, centerLng);
+
+            var map = new google.maps.Map(document.getElementById(mapId), {
+                center: center,
+                zoom: zoomLevel
+            });
+
+            var request = {
+                location: center,
+                radius: '{{ rayon }}',
+                type: [attractionType]
+            };
+
+            var service = new google.maps.places.PlacesService(map);
+            service.nearbySearch(request, function(results, status) {
+                callback(results, status, map, attractionType);
+            });
+        }
+
+
+        // Fonction callback de génération des marqueurs, jusqu'à MAX_PLACES endroits
+        function callback(results, status, map, attractionType) {
+            if (status == google.maps.places.PlacesServiceStatus.OK) {
+              var attractions_json = {};
+
+              // CHOIX AU HASARD
+              if ( optimisation == 1 ) {
+                var choice = Math.floor(Math.random() * results.length);;
+              }
+
+              // CHOIX MEILLEURE COTE
+              if ( optimisation == 2 ) {
+                var highest_rating = -1;
+                var choice = 0;
+                for ( var i = 0; i < results.length; i++ ) {
+                  console.log("Result name : " + results[i].name + ", " + results[i].rating);
+                  if ( results[i].rating > highest_rating) {
+                    console.log("New place : " + results[i].name);
+                    highest_rating = results[i].rating;
+                    choice = i;
+                  }
+                }
+              }
+
+              // CHOIX PLUS PRÈS
+              if ( optimisation == 3 ) {
+                var closest = 10000000;
+                var choice = 0;
+                for ( var i = 0; i < results.length; i++ ) {
+                  var distance = Math.sqrt(Math.pow(Number(lat) - results[i].geometry.location.lat(), 2) + Math.pow(Number(lng) - results[i].geometry.location.lng(), 2));
+                  console.log(distance);
+                  if ( distance < closest) {
+                    console.log("New place : " + distance);
+                    closest = distance;
+                    choice = i;
+                  }
+                }
+              }
+
+              // CHOIX MOINS DISPENDIEUX
+              if ( optimisation == 4 ) {
+                var cheapest = 5;
+                var choice = 0;
+                for ( var i = 0; i < results.length; i++ ) {
+                  var price = results[i].price_level;
+                  if (price == undefined) {
+                    price = 4;
+                  }
+                  console.log("Result name : " + results[i].name + ", " + price);
+                  if ( price < cheapest) {
+                    console.log("New place : " + results[i].name);
+                    cheapest = price;
+                    choice = i;
+                  }
+                }
+              }
+
+              // CHOIX PLUS DISPENDIEUX
+              if ( optimisation == 5 ) {
+                var most_expensive = -1;
+                var choice = 0;
+                for ( var i = 0; i < results.length; i++ ) {
+                  var price = results[i].price_level;
+                  if (price == undefined) {
+                    price = 0;
+                  }
+                  console.log("Result name : " + results[i].name + ", " + price);
+                  if ( price > most_expensive) {
+                    console.log("New place : " + results[i].name);
+                    most_expensive = price;
+                    choice = i;
+                  }
+                }
+              }
+
+
+
+                  var attraction_name = 'attraction' + (attraction_count + 1);
+                  attraction_count++;
+                    createMarker(results[choice], map);
+                    //TODO : LES MARQUEURS METTRE DANS UN AUTRE FORMAT
+                    current_attraction = {};
+                    current_attraction.latitude = results[choice].geometry.location.lat();
+                    current_attraction.longitude = results[choice].geometry.location.lng();
+                    current_attraction.name = results[choice].name;
+                    current_attraction.type = attractionType;
+                    attractions_json[attraction_name] = current_attraction;
+                    dataF += (results[choice].geometry.location.lat() + '::' + results[choice].geometry.location.lng() + '::' + results[choice].name.replace('\'','') + '::' + attractionType.replace('\'','') + ';');
+
+            }
+            if (attractionType != 'None') data();
+        }
+
+
+        // Génération des maps avec marqueurs
+        for (let i = 0; i < 6; i++) {
+            if (attractions[i] != "None") {
+                google.maps.event.addDomListener(window, 'load', function() {
+                    var map_name = 'map' + (i + 1);
+                    initMap(map_name, parseFloat(lng), parseFloat(lat), attractions[i], 11);});
+            }
+        }
+        
+      
+         // TITRE DES MINIMAPS
+            for (let i = 1; i <= 3; i++) {
+                let r = "row" + i;
+                let attraction1 = attractions[2 * i - 2];
+                let attraction2 = attractions[2 * i - 1];
+                let title = "<div class='trajet-small-title'><h1>";
+
+                if (attraction1 != "None") {
+                    title += attraction1;
+                }
+
+                if (attraction2 != "None") {
+                    if (attraction1 != "None") {
+                        title += " & ";
+                    }
+                    title += attraction2;
+                }
+
+                title += "</h1></div>";
+                
+                // Si le titre ne contient aucune attraction valide, ne pas afficher le titre
+                if (attraction1 != "None" || attraction2 != "None") {
+                    document.getElementById(r).innerHTML = title + document.getElementById(r).innerHTML;
+                } else {
+                    document.getElementById(r).style.display = 'none';
+                }
+            }
+
+
+        function data() {
+
+          attrs = dataF.split(";");
+          nbr_attrs = attrs.length-1;
+          pack = "";
+
+          com = "<form method='POST' name='myForm' action='{{ url_for('path')}}'>";
+
+          for(var i = 0; i < nbr_attrs; i++) {
+            
+            com += "<select name='Attraction_" + i + "'>";
+            
+              for(var j = 0; j < nbr_attrs; j++) {
+
+                if(j == 0) com += "<option id='" + i + "' value='" + i + "'>" + attrs[i].replace('\'','').split("::")[3] + ": " + attrs[i].replace('\'','').split("::")[2] + "</option>";     
+                else if(j == i) com += "<option id='" + 0 + "' value='" + 0 + "'>" + attrs[0].replace('\'','').split("::")[3] + ": " + attrs[0].replace('\'','').split("::")[2] + "</option>";     
+                else com += "<option id='" + j + "' value='" + j + "'>" + attrs[j].replace('\'','').split("::")[3] + ": " + attrs[j].replace('\'','').split("::")[2] + "</option>";     
+              }
+            
+            com += "</select><br>"
+            
+            //com += attrs[i].replace('\'','').split("::")[3] + ": " + attrs[i].replace('\'','').split("::")[2] + "<input type='text' size='2' id='fname" + i + "' name='fname" + i + "' value=''><br>";
+            pack+=attrs[i].replace('\'','') + ";";
+          }
+
+          pack+=";" + nbr_attrs;
+          
+          com += "<input type='hidden' id='dataTrajets' name='dataTrajets' value='" + pack + "'><br>";
+          com += "<input style='visibility: hidden' id='Deplacement' name='Deplacement' value='"+ '{{ Deplacement }}' +"'><br>";
+          com += "<input style='visibility: hidden' id='lng' name='lng' value='"+ '{{ lng }}' +"'><br>";
+          com += "<input style='visibility: hidden' id='lat' name='lat' value='"+ '{{ lat }}' +"'><br>";
+          com += "<input style='visibility: hidden' type='number' id='rayon' name='rayon' value='"+ '{{ rayon }}' +"'><br>";
+          com += "<select name='optimisation'><option value='distance'>Distance</option><option value='Choix'>Choix utilisateur</option></select><br>";   
+          com += "<button type='submit' class='btn btn-primary'>Générere l'itinéraire</button></form>";
+
+          document.getElementById('form1').innerHTML = com;
+        }
+        // Masquer les cartes qui ont la valeur "None"
+        for (let i = 0; i < 6; i++) {
+          let mapElement = document.getElementById('map' + (i + 1));
+        if (attractions[i] == "None") {
+        mapElement.style.display = 'none';
+        } else {
+        mapElement.style.display = 'block';
+        }
+        }
+
+        </script>
+      </div>
+    </div>
+    {% include 'script.html' %}
+  </body>
+</html>

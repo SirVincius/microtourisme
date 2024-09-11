@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+  {% include 'head.html' %}
+
+  <head> </head>
+  <body>
+    <div class="container-fluid">
+      {% include 'navbar.html' %}
+      <div class="container">
+
+
+
+
+
+        <div class="meteo-page margin-bottom-medium">
+            <div class="container">
+              <div class="container-local home-title-container">
+                <h1 class="home-title">Prévisions Météo Horaires</h1>
+                <ul class="nav nav-tabs" id="weatherTabs" role="tablist">
+                  <li class="nav-item" role="presentation">
+                    <a class="nav-link active" id="today-tab" data-toggle="tab" href="#today" role="tab" aria-controls="today" aria-selected="true">Aujourd'hui</a>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="tomorrow-tab" data-toggle="tab" href="#tomorrow" role="tab" aria-controls="tomorrow" aria-selected="false">Demain</a>
+                  </li>
+                  <li class="nav-item" role="presentation">
+                    <a class="nav-link" id="day_after_tomorrow-tab" data-toggle="tab" href="#day_after_tomorrow" role="tab" aria-controls="day_after_tomorrow" aria-selected="false">{{ weather['day_after_tomorrow'][0]['weekday'] }}</a>
+                  </li>
+                </ul>
+                <div class="tab-content" id="weatherTabContent">
+                  <div class="tab-pane fade show active" id="today" role="tabpanel" aria-labelledby="today-tab">
+                    <div class="weather-container">
+                      {% for hour in weather.today %}
+                        <div class="weather-hour">
+                          <p>{{ 'Maintenant' if hour.is_now else hour.time }}</p>
+                          <img src="{{ hour.icon }}" alt="Icône météo">
+                          <p>{{ hour.temperature }}°C</p>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="tomorrow" role="tabpanel" aria-labelledby="tomorrow-tab">
+                    <div class="weather-container">
+                      {% for hour in weather.tomorrow %}
+                        <div class="weather-hour">
+                          <p>{{ hour.time }}</p>
+                          <img src="{{ hour.icon }}" alt="Icône météo">
+                          <p>{{ hour.temperature }}°C</p>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  <div class="tab-pane fade" id="day_after_tomorrow" role="tabpanel" aria-labelledby="day_after_tomorrow-tab">
+                    <div class="weather-container">
+                      {% for hour in weather.day_after_tomorrow %}
+                        <div class="weather-hour">
+                          <p>{{ hour.time }}</p>
+                          <img src="{{ hour.icon }}" alt="Icône météo">
+                          <p>{{ hour.temperature }}°C</p>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+
+
+
+
+
+
+
+          <div class="container">
+        <div id="map"></div>
+      </div>
+        <div class="container margin-bottom-medium">
+        <div class="container-local home-title-container" id="eee">
+        </div>
+      </div>
+        <div id="map_canvas" style="height: 600px"></div>
+        <script>
+          
+          data = "{{data}}";
+
+          data = data.replace("&amp;","and");
+
+          data2 = '{{nav|safe}}';
+          
+          data3 = data2.split("{");
+
+          //alert(data3[0]);
+
+          if(data3.length > 0) {
+          var str = "<h3>Directions</h3><ul>";
+
+          for(var i = 0; i < data3.length - 1; i++) {
+
+            data3_finales = "";
+
+            for(var w = 0; w < data3[i].length; w++) {
+
+              if(w < data3[i].length - 3 && data3[i].substring(w, w+3) == "ÉÉÉ") {
+                data3_finales += "\'";
+                w+=2;
+              }
+              else if(w < data3[i].length - 2 && data3[i].substring(w, w+2) == "ÉÉ") 
+              {
+                data3_finales += "<br>";
+                w++;
+              }
+              else data3_finales += data3[i][w];
+            }
+
+            str+="<li>" + data3_finales + "</li>";
+          }
+          str += "</ul>";
+          document.getElementById("eee").innerHTML = str;
+        }
+        </script>
+
+        <script>
+          var myLatLng;
+
+          function utf16ToText(s) {
+            return s.replace(/\\u[0-9a-fA-F]{4}/gi, match => {
+              return String.fromCharCode(parseInt(match.replace(/\\u/g, ""), 16));
+            });
+          }
+
+          function colorFromAdvisory(i, data) {
+
+              var red = "#FF0000";
+              var green = "#00FF00";
+              var blue = "#0000FF";
+
+              var dataF = JSON.parse(data);
+              
+              if(dataF.length > 0) {
+              var adv = dataF[0];
+              for(var j = 0; j < adv.length; j++) {
+
+                
+                pend = adv[j]['endPolylinePointIndex'];
+                pbegin = adv[j]['startPolylinePointIndex'];
+
+                if(i >= parseInt(pbegin) && i < parseInt(pend)){
+
+                  if(adv[j]['speed'] == "SLOW") return blue;
+                  else if(adv[j]['speed'] == "NORMAL") return green;
+                  else return red;
+                }
+              }
+            }
+            return green;
+          }
+
+          function initialize() {
+
+            arrival_lat = '{{ lat }}';
+            arrival_lng = '{{ lng }}';
+            
+            myLatLng = new google.maps.LatLng(arrival_lat, arrival_lng);
+            var mapOptions = {
+              zoom: 13,
+              center: myLatLng,
+              mapTypeId: google.maps.MapTypeId.TERRAIN,
+            };
+
+            var bermudaTriangle;
+
+            var map = new google.maps.Map(
+              document.getElementById("map_canvas"),
+              mapOptions
+            );
+
+            //ggg = "{{polylines}}"
+
+            colorisation = ["#FF0000","#00FF00","#0000FF","#000000","#FFFF00","#00FFFF"];
+            width = [4,4];
+            select = 0;
+
+            bytes_data = '{{polylines|safe}}';
+
+            polylines = JSON.parse(bytes_data)
+
+            for(var i = 0; i < polylines.length; i++) {
+
+              var poly = ""
+              for(var j = 0; j < polylines[i].length; j++) {
+
+                if(polylines[i][j] == 'É') {
+
+                  poly += '\\';
+                }
+                else poly += polylines[i][j];
+              }
+
+              polylines[i] = poly;
+            }
+
+            var dataAdvisory = '{{travelAdvisory|safe}}';
+
+            
+
+              for(i = 0; i < polylines.length; i++) {
+
+                dp = polylines[i];
+
+                dp = utf16ToText(dp);
+
+                //document.getElementById('eee').innerHTML = dp;
+
+                //let unicode_decoder = new TextDecoder('utf-16');            
+                //text_data = unicode_decoder(dp);
+
+                // Construct the polygon
+              /*  bermudaTriangle = new google.maps.Polyline({
+                path: google.maps.geometry.encoding.decodePath(dp),
+                strokeColor: colorisation[i],
+                strokeOpacity: 0.33,
+                strokeWeight: width[select]
+              });
+
+              bermudaTriangle.setMap(map);*/
+
+              var polyline = new google.maps.Polyline({
+                path: google.maps.geometry.encoding.decodePath(dp)
+              });
+              
+              var ll = new google.maps.LatLng(polyline.getPath().getAt(0));
+
+              for (var j = 1; j < polyline.getPath().getLength(); j++) {
+                
+                var polyTmp = new google.maps.MVCArray([]);
+                polyTmp.push(ll);
+                polyTmp.push(polyline.getPath().getAt(j))
+
+                ll = new google.maps.LatLng(polyline.getPath().getAt(j));
+                var ddss = colorFromAdvisory(j, dataAdvisory);
+                var poly = new google.maps.Polyline({                  
+                  path: polyTmp,
+                  strokeColor: ddss,
+                  strokeOpacity: 0.33,
+                  strokeWeight: 8,
+                });
+
+                poly.setMap(map)
+              }              
+
+              select++;
+              if(select == 2) select = 0;
+            }
+              
+            cityCircle = new google.maps.Circle({
+              strokeColor: '#FF0000',
+              strokeOpacity: 0.8,
+              strokeWeight: 2,
+              fillColor: '#FF0000',
+              map:map,
+              fillOpacity: 0.05,
+              center: new google.maps.LatLng('{{ lat }}', '{{ lng }}'),
+              radius: parseInt('{{ rayon }}')
+            });     
+            
+            cityCircle.setMap(map);
+            
+            data = '{{data}}';
+
+            data = data.replace("&amp;","and")
+
+            dataC = data.split(";");
+
+            coo = JSON.parse('{{coords|safe}}')
+
+            for(i = 0; i < coo.length; i++){
+              
+              if(coo[i] >= -1) {
+              point = new google.maps.LatLng(dataC[coo[i]].split("::")[0], dataC[coo[i]].split("::")[1])
+
+              var marker = new google.maps.Marker({
+                position: point,
+                label: dataC[coo[i]].split("::")[2],
+                map: map
+                  });
+              }
+            }
+
+            /*map.setCenter(
+              polyline
+                .getPath()
+                .getAt(0)
+            );*/
+          }
+          google.maps.event.addDomListener(window, "load", initialize);
+        </script>
+
+        <script src="https://maps.googleapis.com/maps/api/js?libraries=geometry&key=AIzaSyCS0DxssaR4GBA6Qjd9H_WQsoasUntGcNc"></script>
+        <!-- Début : Fenêtre de feedback -->
+        <div>
+          <div class="margin-top-medium margin-bottom-medium">
+            <form id="commentaire-form">
+              <h3>Etes-vous satisfait du trajet généré?</h3>
+              <div class="form-group">
+                <button id="oui_button" class="btn btn-success" type="button">Oui &#10003;</button>
+                <button id="non_button" class="btn btn-danger" type="button">Non &#10007;</button>
+              </div>
+              <div class="form-group margin-top-medium">
+                <p>Laissez-nous un commentaire!</p>
+                <textarea class="form-control" name="commentaire" id="commentaire" rows="3"></textarea>
+              </div>
+              <button id="envoyer_button" class="btn btn-primary" type="button">Envoyer</button>
+            </form>
+          </div>
+        </div>
+        <script>
+          window.onload = function () {
+            var est_satisfait = 2;
+            var oui = document.getElementById('oui_button');
+            var non = document.getElementById('non_button');
+            var envoyer = document.getElementById('envoyer_button');
+
+            oui.addEventListener('click', function() {
+              est_satisfait = 1;
+              oui.style.opacity = 1;
+              non.style.opacity = 0.5;
+            })
+            non.addEventListener('click', function() {
+              est_satisfait = 0;
+              oui.style.opacity = 0.5;
+              non.style.opacity = 1;
+            })
+
+            envoyer.addEventListener('click', function() {
+            var commentaire = document.getElementById('commentaire').value;
+            envoyer.disabled = true;
+            oui.disabled = true;
+            non.disabled = true;
+            oui.style.opacity = 0.5;
+            non.style.opacity = 0.5;
+            envoyer.innerHTML = 'Merci!';
+            envoyer.style.opacity = 1;
+            fetch('{{ url_for("commentaire")}}', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ est_satisfait: est_satisfait, commentaire: commentaire})
+            })
+            .then(response => response.json())
+          });
+        }
+        </script>
+        <!-- Fin : Fenêtre de feedback -->
+     
+      </div>
+    </div>
+    {% include 'script.html' %}
+  </body>
+</html>

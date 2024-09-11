@@ -1,0 +1,33 @@
+@startuml bd
+
+title Diagramme de supression de compte
+
+actor administrateur as u
+participant ":compte.html" as c
+participant ":Flask route /delete_user" as f
+database "Base de données" as db
+
+activate u
+u -> c : requête HTTP
+activate c
+c -> f : supprimer_admin()
+deactivate c
+activate f
+    f -> f : delete_user(id)
+    activate f
+alt Succes
+    f -> db : delete_user(id)
+    alt Succes
+        db --> f : True
+    else Echec
+        db --> f : False
+    end
+    f --> u : confirmation.html
+else Echec
+    f --> u : error.html
+end
+
+
+
+
+@enduml

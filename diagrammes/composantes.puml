@@ -1,0 +1,33 @@
+@startuml
+
+title <size:24><color:#darkblue><u><:1f98b:> Diagramme de composants <:1f98b:></u></color></size>
+
+[API: Google] as AG #LightGreen
+
+[API: Météo] as AM #LightGreen
+
+[Interface UI] as IU #LightSkyBlue
+
+[Serveur application] as SA #blue
+
+
+
+() "accès aux données carte" as VV #red
+() "accès aux données météo" as VC #red
+
+database "MySQL" #pink{
+
+    left to right direction
+
+    [Database trajets] as DB
+    [Database commentaires] as DBC
+}
+
+SA --right-- VV
+VV --right-- AG
+SA -left- VC
+VC -left- AM
+SA -up- IU
+SA -down-- "MySQL"
+
+@enduml
