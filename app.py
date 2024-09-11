@@ -15,7 +15,7 @@ import geocoder
 
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'fdhdsf78dhfds87hf8dshfdnv77234234754nfd987fa'
+app.config['SECRET_KEY'] = 'INSERTKEY'
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config.update(
     SESSION_COOKIE_SECURE=True,
